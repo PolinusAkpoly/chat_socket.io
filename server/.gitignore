@@ -1,0 +1,30 @@
+# Ignorer les fichiers générés par le système d'exploitation
+.DS_Store
+Thumbs.db
+
+# Ignorer les fichiers de configuration spécifiques à l'IDE
+.idea/
+.vscode/
+
+# Ignorer les fichiers de dépendances Node.js
+node_modules/
+
+# Ignorer les fichiers de construction et les répertoires de sortie
+/build
+/dist
+/out
+
+# Ignorer les fichiers de configuration et les secrets sensibles
+.env
+config.js
+secrets.json
+
+# Ignorer les fichiers de sauvegarde
+*.bak
+*.backup
+
+# Ignorer les fichiers de journalisation
+*.log
+
+# Ignorer les fichiers de cache
+.cache
