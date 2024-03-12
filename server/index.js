@@ -15,28 +15,61 @@ app.get('/', (req, res) => {
   res.send('<h1>Hello world</h1>');
 });
 
-const users = []; // {id:..., username:...  }
+//const users = []; // {id:..., username:...  }
+const users =[
+  // {"id": 1, "username": "Alice"},
+  // {"id": 2, "username": "Bob"},
+  // {"id": 3, "username": "Charlie"},
+  // {"id": 4, "username": "David"},
+  // {"id": 5, "username": "Eve"},
+  // {"id": 6, "username": "Frank"},
+  // {"id": 7, "username": "Grace"},
+  // {"id": 8, "username": "Hannah"},
+  // {"id": 9, "username": "Ivy"},
+  // {"id": 10, "username": "Jack"}
+]
+
+// let name = ""
+// users.map((user)=>{
+//   name = user.name
+// })
+
+let name = ""
+console.log(name);
 io.on('connection', (socket) => {
   console.log('a user connected');
-  users.push({id: socket.id, name: ''});
-  console.log({ users });
-  socket.emit('newMessage', {message: "Bienvenue dans le chat!", name: "server"});
+  // users.push({id: socket.id, name: ""});
+  // console.log({ users });
+  socket.emit('newMessage', {message: "Bienvenue dans le chat!", name: "serveur"});
+
+
+  // Envoyer le nombre d'utilisateurs connectés au client
+  io.emit('userCount', users.length);
+  io.emit('users', users.filter(user => user.name != ''));
 
   socket.on('message', (data) => {
     console.log('Message reçu du client:', data);
-    console.log({ soketId: socket.id });
-    io.emit('newMessage', data);
+    const { senderId, message} = data
+    console.log({ senderId });
+    let user = users.find(u => u.sockedId === senderId)
+    data = {...data, user}
+   
+    io.to([senderId]).emit('newMessage', data);
+
+    user = users.find(u => u.sockedId === socket.id)
+    data = {...data, user}
+    io.to([socket.id]).emit('newMessage', data);
   });
 
-  // Gérez la déconnexion des clients
-  socket.on('setName', (username) => {
-    const user = users.find(u => u.id == socket.id);
-    if (user !== -1) {
-        user.name = username
-      users.splice(index, 1);
-    }
-    console.log('Un client s\'est déconnecté');
-  });
+
+
+  
+  socket.on('newUser', (name)=> {
+    users.push({sockedId: socket.id, name})
+    socket.join(socket.id)
+    io.emit('users', users)
+  })
+ 
   socket.on('disconnect', () => {
     const index = users.indexOf(socket.id);
     if (index !== -1) {
